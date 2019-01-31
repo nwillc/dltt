@@ -11,6 +11,10 @@ package com.github.nwillc.dltt.model
 import com.github.javafaker.Faker
 import com.github.nwillc.dltt.model.LifeCycle.ACTIVE_CANCELLABLE
 import com.github.nwillc.dltt.model.LifeCycle.AWAITING_PREMIUM_DEPOSIT
+import com.github.nwillc.dltt.model.PolicyEvent.ACTIVE_ONE_MONTH
+import com.github.nwillc.dltt.model.PolicyEvent.CANCELLED_BY_OWNER
+import com.github.nwillc.dltt.model.PolicyEvent.DEATH_OF_OWNER
+import com.github.nwillc.dltt.model.PolicyEvent.ONE_MONTH
 import com.github.nwillc.dltt.model.PolicyEvent.PREMIUM_RECEIVED
 import com.github.nwillc.dltt.model.PolicyEvent.TERM_COMPLETE
 import org.assertj.core.api.Assertions.assertThat
@@ -51,5 +55,41 @@ internal class PolicyTest {
         val policy = Policy(policyId)
         policy.accept(PREMIUM_RECEIVED)
         assertThat(policy.lifeCycle).isEqualTo(ACTIVE_CANCELLABLE)
+    }
+
+    @Test
+    internal fun fullNormalLifeCycle() {
+        val policyId = faker.idNumber().ssnValid()
+
+        val policy = Policy(policyId, 2)
+        val events = listOf(PREMIUM_RECEIVED, ACTIVE_ONE_MONTH, ONE_MONTH, TERM_COMPLETE)
+
+        events.forEach { policy.accept(it) }
+        assertThat(policy.isActive).isFalse()
+        assertThat(policy.lifeCycle).isEqualTo(LifeCycle.CLOSED_TERM_COMPLETE)
+    }
+
+    @Test
+    internal fun fullCancelLifeCycle() {
+        val policyId = faker.idNumber().ssnValid()
+
+        val policy = Policy(policyId)
+        val events = listOf(PREMIUM_RECEIVED, CANCELLED_BY_OWNER)
+
+        events.forEach { policy.accept(it) }
+        assertThat(policy.isActive).isFalse()
+        assertThat(policy.lifeCycle).isEqualTo(LifeCycle.CLOSED_CANCELLED)
+    }
+
+    @Test
+    internal fun fullDeathLifeCycle() {
+        val policyId = faker.idNumber().ssnValid()
+
+        val policy = Policy(policyId)
+        val events = listOf(PREMIUM_RECEIVED, ACTIVE_ONE_MONTH, DEATH_OF_OWNER)
+
+        events.forEach { policy.accept(it) }
+        assertThat(policy.isActive).isFalse()
+        assertThat(policy.lifeCycle).isEqualTo(LifeCycle.CLOSED_OWNER_DIED)
     }
 }

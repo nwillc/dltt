@@ -8,18 +8,65 @@
 
 package com.github.nwillc.dltt.model
 
-class Policy(val id: String) {
-    private var _lifeCycle = LifeCycle.AWAITING_PREMIUM_DEPOSIT
-    val lifeCycle: LifeCycle
-        get() = _lifeCycle
+import com.github.nwillc.dltt.model.PolicyEvent.*
+
+class Policy(val id: String, val durationMonths: Int = 12) {
+    var lifeCycle = LifeCycle.AWAITING_PREMIUM_DEPOSIT
+        private set
     val isActive: Boolean
         get() = lifeCycle.state == State.ACTIVE
+    var currentMonth: Int = 0
+        private set
 
     fun accept(event: PolicyEvent): Boolean {
+        // Check if this event is *basically* at the right time
         if (!lifeCycle.allowableEvent(event)) {
             return false
         }
-        _lifeCycle = event.nextLifeCycle
+        when(event) {
+            CANCELLED_BY_OWNER -> fullPayout()
+            TERM_COMPLETE -> {
+                if (currentMonth != durationMonths) {
+                    return false
+                }
+                fullPayout()
+            }
+            DEATH_OF_OWNER -> {
+                changePayee()
+                fullPayout()
+            }
+            ACTIVE_ONE_MONTH, ONE_MONTH -> {
+                incrementMonth()
+                monthylyPayout()
+            }
+            PREMIUM_RECEIVED -> beginClock()
+        }
+        lifeCycle = event.nextLifeCycle
         return true
     }
+
+    private fun beginClock() {
+        currentMonth = 0
+    }
+
+    private fun incrementMonth() {
+        currentMonth++
+    }
+
+    private fun monthylyPayout() {
+        println("monthly payout")
+    }
+
+    private fun changePayee() {
+        println("change payee")
+    }
+
+    private fun fullPayout() {
+        println("make payout")
+    }
+
+    override fun toString(): String {
+        return "Policy(id='$id', durationMonths=$durationMonths, lifeCycle=$lifeCycle, currentMonth=$currentMonth)"
+    }
+
 }
