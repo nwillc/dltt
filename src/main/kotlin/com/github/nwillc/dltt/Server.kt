@@ -12,6 +12,11 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
+import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
+import io.ktor.response.respond
+import io.ktor.routing.get
+import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import org.slf4j.LoggerFactory
@@ -25,7 +30,14 @@ class Server : CliktCommand() {
 
     override fun run() {
         LOGGER.info("Starting on {}", port)
-        val server = embeddedServer(Netty, port) {}
+        val server = embeddedServer(Netty, port) {
+            routing {
+                get("/api/ping") {
+                    LOGGER.info("ACK")
+                    call.respond(HttpStatusCode.Accepted)
+                }
+            }
+        }
         server.start(true)
     }
 }
