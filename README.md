@@ -1,7 +1,7 @@
 # Skeletal Kotlin Project
 
 
-## Incorporates
+## Employs
 
  - Gradle 5.1.1
     - Kotlin DSL
