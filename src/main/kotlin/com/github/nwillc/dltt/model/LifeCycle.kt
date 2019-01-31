@@ -6,26 +6,13 @@
  * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.dltt
+package com.github.nwillc.dltt.model
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
-
-internal class LifeCycleTest {
-
-    @Test
-    fun getStateActive() {
-        assertThat(LifeCycle.AWAITING_PREMIUM_DEPOSIT.state).isEqualTo(State.ACTIVE)
-        assertThat(LifeCycle.ACTIVE_CANCELLABLE.state).isEqualTo(State.ACTIVE)
-        assertThat(LifeCycle.ACTIVE.state).isEqualTo(State.ACTIVE)
-    }
-
-    @Test
-    fun getStateClosed() {
-        assertThat(LifeCycle.CLOSED_CANCELLED.state).isEqualTo(State.CLOSED)
-        assertThat(LifeCycle.CLOSED_OWNER_DIED.state).isEqualTo(State.CLOSED)
-        assertThat(LifeCycle.CLOSED_TERM_COMPLETE.state).isEqualTo(State.CLOSED)
-    }
+enum class LifeCycle(val state: State) {
+    AWAITING_PREMIUM_DEPOSIT(State.ACTIVE),
+    ACTIVE_CANCELLABLE(State.ACTIVE),
+    CLOSED_CANCELLED(State.CLOSED),
+    ACTIVE(State.ACTIVE),
+    CLOSED_OWNER_DIED(State.CLOSED),
+    CLOSED_TERM_COMPLETE(State.CLOSED)
 }
