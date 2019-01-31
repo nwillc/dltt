@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val assertJVersion = "3.11.1"
 val jupiterVersion = "5.4.0-RC1"
 val slf4jApiVersion = "1.7.25"
+val fakerVersion = "0.16"
 
 plugins {
     kotlin("jvm") version "1.3.20"
@@ -22,6 +23,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:$slf4jApiVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
+    testImplementation("com.github.javafaker:javafaker:$fakerVersion")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
 }
 

@@ -8,13 +8,18 @@
 
 package com.github.nwillc.dltt.model
 
+import com.github.javafaker.Faker
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class PolicyTest {
+    private val faker = Faker()
+
     @Test
     internal fun initialLifeCycle() {
-        val policy = Policy()
+        val policyId = faker.idNumber().ssnValid()
+
+        val policy = Policy(policyId)
         assertThat(policy.lifeCycle).isEqualTo(LifeCycle.AWAITING_PREMIUM_DEPOSIT)
         assertThat(policy.isActive).isTrue()
     }

@@ -8,7 +8,7 @@
 
 package com.github.nwillc.dltt.model
 
-class Policy {
+class Policy(val id: String) {
     private var _lifeCycle = LifeCycle.AWAITING_PREMIUM_DEPOSIT
     val lifeCycle: LifeCycle
         get() = _lifeCycle
