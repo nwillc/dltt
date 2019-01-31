@@ -12,10 +12,14 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
+import com.github.nwillc.dltt.model.Policy
+import com.github.nwillc.dltt.model.PolicyEvent
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.put
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -26,15 +30,36 @@ private val LOGGER = LoggerFactory.getLogger(Server::class.java)
 private const val DEFAULT_PORT = 8080
 
 class Server : CliktCommand() {
-    val port: Int by option(help = "Port number to run server on.").int().default(DEFAULT_PORT)
+    val policies = mutableMapOf<String,Policy>()
+    val port by option(help = "Port number to run server on.").int().default(DEFAULT_PORT)
 
     override fun run() {
         LOGGER.info("Starting on {}", port)
         val server = embeddedServer(Netty, port) {
             routing {
-                get("/api/ping") {
+                get("ping") {
                     LOGGER.info("ACK")
                     call.respond(HttpStatusCode.Accepted)
+                }
+                get("policies") {
+                    LOGGER.info("list policies")
+
+                    policies.values.forEach { LOGGER.info(it.toString()) }
+                }
+                post("policies/{id}") {
+                    val id = call.parameters["id"]!!
+                    val duration = call.parameters["duration"] ?: "12"
+
+                    LOGGER.info("Create policy {} with duration {}", id, duration)
+
+                    policies[id] = Policy(id,duration.toInt())
+                }
+                put("policies/{id}/{event}") {
+                    val id = call.parameters["id"]
+                    val event = PolicyEvent.valueOf(call.parameters["event"]!!)
+
+                    LOGGER.info("Event {} for policy {}", event, id)
+                    policies[id]?.accept(event)
                 }
             }
         }

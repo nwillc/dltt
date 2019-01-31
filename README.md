@@ -27,7 +27,7 @@ $ java -jar ./build/libs/*.jar --port 8090
 Is it up?
 
 ```bash
-$ curl http://localhost:8080/api/ping
+$ curl http://localhost:8080/ping
 20190131163736 INFO Server: ACK
 ```
 
