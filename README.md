@@ -1,5 +1,8 @@
 # Skeletal Kotlin Project
 
+## Work Goal 
+
+Model the policy lifecycle.
 
 ## Employs
 
