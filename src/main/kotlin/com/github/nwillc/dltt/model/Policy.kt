@@ -14,6 +14,9 @@ import com.github.nwillc.dltt.model.PolicyEvent.DEATH_OF_OWNER
 import com.github.nwillc.dltt.model.PolicyEvent.ONE_MONTH
 import com.github.nwillc.dltt.model.PolicyEvent.PREMIUM_RECEIVED
 import com.github.nwillc.dltt.model.PolicyEvent.TERM_COMPLETE
+import org.slf4j.LoggerFactory
+
+private val LOGGER = LoggerFactory.getLogger(Policy::class.java)
 
 class Policy(val id: String, val durationMonths: Int = 12) {
     var lifeCycle = LifeCycle.AWAITING_PREMIUM_DEPOSIT
@@ -26,6 +29,7 @@ class Policy(val id: String, val durationMonths: Int = 12) {
     fun accept(event: PolicyEvent): Boolean {
         // Check if this event is at all possible - other limitations may apply
         if (!lifeCycle.allowableEvent(event)) {
+            LOGGER.warn("Illegal event {} when {}", event, this)
             return false
         }
 
@@ -49,6 +53,7 @@ class Policy(val id: String, val durationMonths: Int = 12) {
             PREMIUM_RECEIVED -> beginClock()
         }
         lifeCycle = event.nextLifeCycle
+        LOGGER.info("Event {} accepted, now {}", event, this)
         return true
     }
 
@@ -61,15 +66,15 @@ class Policy(val id: String, val durationMonths: Int = 12) {
     }
 
     private fun monthyPayout() {
-        println("monthly payout")
+        LOGGER.info("monthly payout")
     }
 
     private fun changePayee() {
-        println("change payee")
+        LOGGER.info("change payee")
     }
 
     private fun finalPayout() {
-        println("final payout")
+        LOGGER.info("final payout")
     }
 
     override fun toString(): String {
