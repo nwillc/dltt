@@ -8,16 +8,16 @@
 
 package com.github.nwillc.dltt.model
 
-enum class LifeCycle(val state: State, val allowedEvents: List<PolicyEvents> = listOf()) {
+enum class LifeCycle(val state: State, val allowedEvents: List<PolicyEvent>) {
     AWAITING_PREMIUM_DEPOSIT(State.ACTIVE,
-        listOf(PolicyEvents.PREMIUM_RECEIVED)),
+        listOf(PolicyEvent.PREMIUM_RECEIVED)),
     ACTIVE_CANCELLABLE(State.ACTIVE,
-        listOf(PolicyEvents.CANCELLED_BY_OWNER, PolicyEvents.ACTIVE_ONE_MONTH)),
-    CLOSED_CANCELLED(State.CLOSED),
+        listOf(PolicyEvent.CANCELLED_BY_OWNER, PolicyEvent.ACTIVE_ONE_MONTH)),
+    CLOSED_CANCELLED(State.CLOSED, emptyList()),
     ACTIVE(State.ACTIVE,
-        listOf(PolicyEvents.DEATH_OF_OWNER, PolicyEvents.ONE_MONTH, PolicyEvents.TERM_COMPLETE)),
-    CLOSED_OWNER_DIED(State.CLOSED),
-    CLOSED_TERM_COMPLETE(State.CLOSED);
+        listOf(PolicyEvent.DEATH_OF_OWNER, PolicyEvent.ONE_MONTH, PolicyEvent.TERM_COMPLETE)),
+    CLOSED_OWNER_DIED(State.CLOSED, emptyList()),
+    CLOSED_TERM_COMPLETE(State.CLOSED, emptyList());
 
-    fun allowableEvent(event: PolicyEvents): Boolean = allowedEvents.contains(event)
+    fun allowableEvent(event: PolicyEvent): Boolean = allowedEvents.contains(event)
 }

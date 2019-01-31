@@ -13,5 +13,13 @@ class Policy(val id: String) {
     val lifeCycle: LifeCycle
         get() = _lifeCycle
     val isActive: Boolean
-        get() = _lifeCycle.state == State.ACTIVE
+        get() = lifeCycle.state == State.ACTIVE
+
+    fun accept(event: PolicyEvent): Boolean {
+        if (!lifeCycle.allowableEvent(event)) {
+            return false
+        }
+        _lifeCycle = event.nextLifeCycle
+        return true
+    }
 }

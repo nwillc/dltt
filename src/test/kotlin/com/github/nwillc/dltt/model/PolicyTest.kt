@@ -9,6 +9,10 @@
 package com.github.nwillc.dltt.model
 
 import com.github.javafaker.Faker
+import com.github.nwillc.dltt.model.LifeCycle.ACTIVE_CANCELLABLE
+import com.github.nwillc.dltt.model.LifeCycle.AWAITING_PREMIUM_DEPOSIT
+import com.github.nwillc.dltt.model.PolicyEvent.PREMIUM_RECEIVED
+import com.github.nwillc.dltt.model.PolicyEvent.TERM_COMPLETE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -20,7 +24,32 @@ internal class PolicyTest {
         val policyId = faker.idNumber().ssnValid()
 
         val policy = Policy(policyId)
-        assertThat(policy.lifeCycle).isEqualTo(LifeCycle.AWAITING_PREMIUM_DEPOSIT)
+        assertThat(policy.lifeCycle).isEqualTo(AWAITING_PREMIUM_DEPOSIT)
         assertThat(policy.isActive).isTrue()
+    }
+
+    @Test
+    internal fun acceptValidEvent() {
+        val policyId = faker.idNumber().ssnValid()
+
+        val policy = Policy(policyId)
+        assertThat(policy.accept(PREMIUM_RECEIVED)).isTrue()
+    }
+
+    @Test
+    internal fun rejectInvalidEvent() {
+        val policyId = faker.idNumber().ssnValid()
+
+        val policy = Policy(policyId)
+        assertThat(policy.accept(TERM_COMPLETE)).isFalse()
+    }
+
+    @Test
+    internal fun eventAdvancesState() {
+        val policyId = faker.idNumber().ssnValid()
+
+        val policy = Policy(policyId)
+        policy.accept(PREMIUM_RECEIVED)
+        assertThat(policy.lifeCycle).isEqualTo(ACTIVE_CANCELLABLE)
     }
 }

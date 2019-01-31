@@ -48,7 +48,7 @@ internal class LifeCycleTest {
         LifeCycle.values()
             .asSequence()
             .forEach { lifeCycle ->
-                PolicyEvents.values()
+                PolicyEvent.values()
                     .asSequence()
                     .filter { !lifeCycle.allowedEvents.contains(it) }
                     .forEach {

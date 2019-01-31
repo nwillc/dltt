@@ -8,11 +8,19 @@
 
 package com.github.nwillc.dltt.model
 
-enum class PolicyEvents(val nextLifeCycle: LifeCycle) {
-    PREMIUM_RECEIVED(LifeCycle.ACTIVE_CANCELLABLE),
-    CANCELLED_BY_OWNER(LifeCycle.CLOSED_CANCELLED),
-    ACTIVE_ONE_MONTH(LifeCycle.ACTIVE),
-    DEATH_OF_OWNER(LifeCycle.CLOSED_OWNER_DIED),
-    ONE_MONTH(LifeCycle.ACTIVE),
-    TERM_COMPLETE(LifeCycle.CLOSED_TERM_COMPLETE);
+/**
+ * Why am I using a String for _nextLifeCycle and a LifeCycle.valueOf() getter here? Ask Kotlin ...
+ * When I used the nextLifeCycle: LifeCycle, everything compiled clean but the
+ * values were all *null* ?!  Just hacking this now to move on.
+ */
+enum class PolicyEvent(private val _nextLifeCycle: String) {
+    PREMIUM_RECEIVED("ACTIVE_CANCELLABLE"),
+    CANCELLED_BY_OWNER("CLOSED_CANCELLED"),
+    ACTIVE_ONE_MONTH("ACTIVE"),
+    DEATH_OF_OWNER("CLOSED_OWNER_DIED"),
+    ONE_MONTH("ACTIVE"),
+    TERM_COMPLETE("CLOSED_TERM_COMPLETE");
+
+    val nextLifeCycle: LifeCycle
+        get() = LifeCycle.valueOf(_nextLifeCycle)
 }
