@@ -8,7 +8,12 @@
 
 package com.github.nwillc.dltt.model
 
-import com.github.nwillc.dltt.model.PolicyEvent.*
+import com.github.nwillc.dltt.model.PolicyEvent.ACTIVE_ONE_MONTH
+import com.github.nwillc.dltt.model.PolicyEvent.CANCELLED_BY_OWNER
+import com.github.nwillc.dltt.model.PolicyEvent.DEATH_OF_OWNER
+import com.github.nwillc.dltt.model.PolicyEvent.ONE_MONTH
+import com.github.nwillc.dltt.model.PolicyEvent.PREMIUM_RECEIVED
+import com.github.nwillc.dltt.model.PolicyEvent.TERM_COMPLETE
 
 class Policy(val id: String, val durationMonths: Int = 12) {
     var lifeCycle = LifeCycle.AWAITING_PREMIUM_DEPOSIT
@@ -19,25 +24,27 @@ class Policy(val id: String, val durationMonths: Int = 12) {
         private set
 
     fun accept(event: PolicyEvent): Boolean {
-        // Check if this event is *basically* at the right time
+        // Check if this event is at all possible - other limitations may apply
         if (!lifeCycle.allowableEvent(event)) {
             return false
         }
-        when(event) {
-            CANCELLED_BY_OWNER -> fullPayout()
+
+        when (event) {
+            CANCELLED_BY_OWNER -> finalPayout()
             TERM_COMPLETE -> {
                 if (currentMonth != durationMonths) {
+                    // Can only complete when run full duration
                     return false
                 }
-                fullPayout()
+                finalPayout()
             }
             DEATH_OF_OWNER -> {
                 changePayee()
-                fullPayout()
+                finalPayout()
             }
             ACTIVE_ONE_MONTH, ONE_MONTH -> {
                 incrementMonth()
-                monthylyPayout()
+                monthyPayout()
             }
             PREMIUM_RECEIVED -> beginClock()
         }
@@ -53,7 +60,7 @@ class Policy(val id: String, val durationMonths: Int = 12) {
         currentMonth++
     }
 
-    private fun monthylyPayout() {
+    private fun monthyPayout() {
         println("monthly payout")
     }
 
@@ -61,12 +68,11 @@ class Policy(val id: String, val durationMonths: Int = 12) {
         println("change payee")
     }
 
-    private fun fullPayout() {
-        println("make payout")
+    private fun finalPayout() {
+        println("final payout")
     }
 
     override fun toString(): String {
         return "Policy(id='$id', durationMonths=$durationMonths, lifeCycle=$lifeCycle, currentMonth=$currentMonth)"
     }
-
 }
