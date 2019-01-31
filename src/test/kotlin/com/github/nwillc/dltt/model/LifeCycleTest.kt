@@ -8,22 +8,52 @@
 
 package com.github.nwillc.dltt.model
 
+import com.github.nwillc.dltt.model.LifeCycle.ACTIVE
+import com.github.nwillc.dltt.model.LifeCycle.ACTIVE_CANCELLABLE
+import com.github.nwillc.dltt.model.LifeCycle.AWAITING_PREMIUM_DEPOSIT
+import com.github.nwillc.dltt.model.LifeCycle.CLOSED_CANCELLED
+import com.github.nwillc.dltt.model.LifeCycle.CLOSED_OWNER_DIED
+import com.github.nwillc.dltt.model.LifeCycle.CLOSED_TERM_COMPLETE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class LifeCycleTest {
-
     @Test
     fun getStateActive() {
-        assertThat(LifeCycle.AWAITING_PREMIUM_DEPOSIT.state).isEqualTo(State.ACTIVE)
-        assertThat(LifeCycle.ACTIVE_CANCELLABLE.state).isEqualTo(State.ACTIVE)
-        assertThat(LifeCycle.ACTIVE.state).isEqualTo(State.ACTIVE)
+        assertThat(AWAITING_PREMIUM_DEPOSIT.state).isEqualTo(State.ACTIVE)
+        assertThat(ACTIVE_CANCELLABLE.state).isEqualTo(State.ACTIVE)
+        assertThat(ACTIVE.state).isEqualTo(State.ACTIVE)
     }
 
     @Test
     fun getStateClosed() {
-        assertThat(LifeCycle.CLOSED_CANCELLED.state).isEqualTo(State.CLOSED)
-        assertThat(LifeCycle.CLOSED_OWNER_DIED.state).isEqualTo(State.CLOSED)
-        assertThat(LifeCycle.CLOSED_TERM_COMPLETE.state).isEqualTo(State.CLOSED)
+        assertThat(CLOSED_CANCELLED.state).isEqualTo(State.CLOSED)
+        assertThat(CLOSED_OWNER_DIED.state).isEqualTo(State.CLOSED)
+        assertThat(CLOSED_TERM_COMPLETE.state).isEqualTo(State.CLOSED)
+    }
+
+    @Test
+    internal fun validTransitions() {
+        LifeCycle.values()
+            .asSequence()
+            .forEach { lifeCycle ->
+                lifeCycle.allowedEvents.forEach { event ->
+                    assertThat(lifeCycle.allowableEvent(event)).isTrue()
+                }
+            }
+    }
+
+    @Test
+    internal fun invalidTransitions() {
+        LifeCycle.values()
+            .asSequence()
+            .forEach { lifeCycle ->
+                PolicyEvents.values()
+                    .asSequence()
+                    .filter { !lifeCycle.allowedEvents.contains(it) }
+                    .forEach {
+                        assertThat(lifeCycle.allowableEvent(it)).isFalse()
+                    }
+            }
     }
 }
