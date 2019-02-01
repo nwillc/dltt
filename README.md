@@ -8,7 +8,7 @@ events on the policies and generating output events to the log.
 ## Build
 
 ```bash
-$ ./gradlew jar
+$ ./gradlew clean check
 ```
 
 ## Running Server

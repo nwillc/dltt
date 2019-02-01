@@ -3,15 +3,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val assertJVersion = "3.11.1"
 val cliktVersion = "1.6.0"
 val fakerVersion = "0.16"
+val jacocoToolVersion = "0.8.2"
 val jupiterVersion = "5.4.0-RC1"
 val ktorVersion = "1.0.1"
 val slf4jApiVersion = "1.7.25"
 val tinyLogVersion = "1.3.5"
 
 plugins {
+    jacoco
     kotlin("jvm") version "1.3.20"
     id("com.github.nwillc.vplugin") version "2.3.0"
     id("org.jlleitschuh.gradle.ktlint") version "7.0.0"
+    id("io.gitlab.arturbosch.detekt") version "1.0.0.RC9.2"
 }
 
 group = "com.github.nwillc"
@@ -36,6 +39,15 @@ dependencies {
     runtime("org.tinylog:slf4j-binding:$tinyLogVersion")
 }
 
+detekt {
+    input = files("src/main/kotlin")
+    filters = ".*/build/.*"
+}
+
+jacoco {
+    toolVersion = jacocoToolVersion
+}
+
 tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
@@ -44,6 +56,17 @@ tasks {
         manifest.attributes["Automatic-Module-Name"] = "${project.group}.${project.name}"
         manifest.attributes["Main-Class"] = "${project.group}.${project.name}.ServerKt"
         from(Callable { configurations["runtimeClasspath"].map { if (it.isDirectory) it else zipTree(it) } })
+    }
+    withType<JacocoReport> {
+        dependsOn("test")
+        reports {
+            xml.apply {
+                isEnabled = true
+            }
+            html.apply {
+                isEnabled = true
+            }
+        }
     }
     withType<Test> {
         useJUnitPlatform()
