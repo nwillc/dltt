@@ -42,7 +42,7 @@ class Server : CliktCommand() {
                     call.respond(HttpStatusCode.Accepted)
                 }
                 get("policies") {
-                    LOGGER.info("list policies")
+                    LOGGER.debug("list policies")
 
                     policies.values.forEach { LOGGER.info(it.toString()) }
                 }
@@ -50,7 +50,7 @@ class Server : CliktCommand() {
                     val id = call.parameters["id"]!!
                     val duration = call.parameters["duration"] ?: "12"
 
-                    LOGGER.info("Create policy {} with duration {}", id, duration)
+                    LOGGER.debug("Create policy {} with duration {}", id, duration)
 
                     policies[id] = Policy(id,duration.toInt())
                 }
@@ -58,7 +58,7 @@ class Server : CliktCommand() {
                     val id = call.parameters["id"]
                     val event = PolicyEvent.valueOf(call.parameters["event"]!!)
 
-                    LOGGER.info("Event {} for policy {}", event, id)
+                    LOGGER.debug("Event {} for policy {}", event, id)
                     policies[id]?.accept(event)
                 }
             }

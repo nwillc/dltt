@@ -53,7 +53,7 @@ class Policy(val id: String, val durationMonths: Int = 12) {
             PREMIUM_RECEIVED -> beginClock()
         }
         lifeCycle = event.nextLifeCycle
-        LOGGER.info("Event {} accepted, now {}", event, this)
+        LOGGER.debug("Event {} accepted, now {}", event, this)
         return true
     }
 
