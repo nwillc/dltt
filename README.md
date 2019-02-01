@@ -1,4 +1,4 @@
-# Skeletal Kotlin Project
+# Policy Lifecycle Modeling
 
 ## Work Goal 
 
@@ -15,7 +15,8 @@ I wanted this to be event in, event out, allowing for horizontal scaling of this
 and could be persisted easily in a cache or database. 
 
 I put effort into code quality, idiomatic Kotlin, and packaging. I wanted to show my work in the entire life cycle of
-development.  
+development.  But the model ended up cleaner and simpler then I anticipated, nut a bad thing, but not a satisfying
+work sample. I should have moved on to persistence or some other aspect but real life encroached. 
 
 ## Employs
 
